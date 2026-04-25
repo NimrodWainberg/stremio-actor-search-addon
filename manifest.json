@@ -1,0 +1,33 @@
+{
+  "id": "stremio-actor-search-addon",
+  "version": "1.0.0",
+  "name": "Actor Search Addon",
+  "description": "Search for actors and view all their movies and series",
+  "logo": "https://i.imgur.com/your-logo.png",
+  "resources": ["catalog"],
+  "types": ["movie", "series"],
+  "catalogs": [
+    {
+      "id": "actor_search",
+      "name": "Actor Movies",
+      "type": "movie",
+      "extra": [
+        {
+          "name": "search",
+          "isRequired": true
+        }
+      ]
+    },
+    {
+      "id": "actor_search",
+      "name": "Actor Series",
+      "type": "series",
+      "extra": [
+        {
+          "name": "search",
+          "isRequired": true
+        }
+      ]
+    }
+  ]
+}
