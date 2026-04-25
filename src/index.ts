@@ -2,16 +2,30 @@ import 'dotenv/config';
 import express from 'express';
 import { addonBuilder, serveHTTP } from 'stremio-addon-sdk';
 import { TMDBClient } from './tmdb';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 7000;
-const TMDB_API_KEY = process.env.TMDB_API_KEY || '';
 
-if (!TMDB_API_KEY) {
-  console.warn('Warning: TMDB_API_KEY not set. Set it in .env file for full functionality.');
-}
+// Serve static files
+app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.json());
 
-const tmdbClient = new TMDBClient(TMDB_API_KEY);
+// API endpoint to get stored API key
+app.get('/api/config', (req, res) => {
+  const apiKey = req.headers['x-tmdb-api-key'] as string || process.env.TMDB_API_KEY || '';
+  res.json({ hasApiKey: apiKey.length > 0 });
+});
+
+// Initialize TMDB client
+const getTMDBClient = (req: any): TMDBClient => {
+  const apiKey = req.headers['x-tmdb-api-key'] as string || process.env.TMDB_API_KEY || '';
+  return new TMDBClient(apiKey);
+};
 
 // Build the addon
 const addon = new addonBuilder({
@@ -49,7 +63,7 @@ const addon = new addonBuilder({
 });
 
 // Define catalog handler
-addon.defineCatalogHandler(async (args) => {
+addon.defineCatalogHandler(async (args, req) => {
   const { type, extra } = args;
   const searchQuery = extra?.search;
 
@@ -60,6 +74,14 @@ addon.defineCatalogHandler(async (args) => {
   console.log(`Searching for ${type} with actor: ${searchQuery}`);
 
   try {
+    const tmdbClient = getTMDBClient(req);
+    
+    // Check if API key is configured
+    if (!tmdbClient['apiKey'] || tmdbClient['apiKey'].length === 0) {
+      console.log('TMDB API key not configured');
+      return { metas: [] };
+    }
+
     // Search for the person
     const people = await tmdbClient.searchPerson(searchQuery);
     
@@ -108,10 +130,15 @@ addon.defineCatalogHandler(async (args) => {
 // Serve the addon
 serveHTTP(addon.getInterface(), { port: PORT, cache: 3600 });
 
+// Start Express server
 app.listen(PORT, () => {
   console.log(`Stremio Actor Search Addon running on port ${PORT}`);
-  console.log(`Manifest available at: http://localhost:${PORT}/manifest.json`);
-  if (!TMDB_API_KEY) {
-    console.log('⚠️  Warning: TMDB_API_KEY not configured. Set it in .env file for full functionality.');
+  console.log(`📋 Setup page: http://localhost:${PORT}/`);
+  console.log(`📦 Manifest: http://localhost:${PORT}/manifest.json`);
+  console.log(`🔧 Configuration: http://localhost:${PORT}/configure`);
+  
+  if (!process.env.TMDB_API_KEY) {
+    console.log('⚠️  TMDB_API_KEY not set in environment variables');
+    console.log('💡 Users can configure their API key at: http://localhost:${PORT}/configure');
   }
 });

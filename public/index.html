@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actor Search Addon - Setup</title>
+    <script src="stremio-client.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        .steps {
+            text-align: left;
+            margin: 30px 0;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .steps h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .steps ol {
+            padding-left: 20px;
+            color: #555;
+            line-height: 1.8;
+        }
+
+        .steps li {
+            margin-bottom: 10px;
+        }
+
+        .steps a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .steps a:hover {
+            text-decoration: underline;
+        }
+
+        .form-group {
+            margin: 30px 0;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            color: #333;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .success-message {
+            display: none;
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 1px solid #c3e6cb;
+        }
+
+        .error-message {
+            display: none;
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 1px solid #f5c6cb;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            color: #0d47a1;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 1px solid #bbdefb;
+            font-size: 14px;
+        }
+
+        .footer {
+            margin-top: 30px;
+            color: #999;
+            font-size: 12px;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-indicator.active {
+            background: #28a745;
+        }
+
+        .status-indicator.inactive {
+            background: #dc3545;
+        }
+
+        .stremio-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 24px;
+            background: #1a1a2e;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+
+        .stremio-link:hover {
+            background: #16213e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🎬</div>
+        <h1>Actor Search Addon</h1>
+        <p class="subtitle">Search for actors and discover all their movies & series</p>
+
+        <div class="info-box">
+            <span class="status-indicator" id="statusIndicator"></span>
+            <span id="statusText">Checking configuration...</span>
+        </div>
+
+        <div class="steps">
+            <h2>📋 Setup Instructions</h2>
+            <ol>
+                <li>Visit <a href="https://www.themoviedb.org/settings/api" target="_blank">TMDB API Settings</a></li>
+                <li>Sign up for a free TMDB account</li>
+                <li>Request an API key (it's free!)</li>
+                <li>Copy your API key below</li>
+                <li>Click "Save Configuration"</li>
+            </ol>
+        </div>
+
+        <div class="form-group">
+            <label for="tmdbApiKey">TMDB API Key</label>
+            <input 
+                type="text" 
+                id="tmdbApiKey" 
+                placeholder="Enter your TMDB API key here"
+                autocomplete="off"
+            >
+        </div>
+
+        <button class="button" onclick="saveConfiguration()">💾 Save Configuration</button>
+
+        <div class="success-message" id="successMessage">
+            ✅ Configuration saved successfully! You can now use the addon in Stremio.
+        </div>
+
+        <div class="error-message" id="errorMessage">
+            ❌ Please enter a valid TMDB API key.
+        </div>
+
+        <a href="https://stremio.com" target="_blank" class="stremio-link">🚀 Open Stremio</a>
+
+        <div class="footer">
+            <p>Your API key is stored locally on your device and never sent to any third-party servers.</p>
+        </div>
+    </div>
+
+    <script>
+        // Check if API key is already configured
+        function checkConfiguration() {
+            const apiKey = window.getTMDBApiKey ? window.getTMDBApiKey() : localStorage.getItem('tmdb_api_key');
+            const statusIndicator = document.getElementById('statusIndicator');
+            const statusText = document.getElementById('statusText');
+            const apiKeyInput = document.getElementById('tmdbApiKey');
+
+            if (apiKey && apiKey.length > 0) {
+                statusIndicator.classList.add('active');
+                statusIndicator.classList.remove('inactive');
+                statusText.textContent = '✓ API Key configured';
+                apiKeyInput.value = apiKey;
+            } else {
+                statusIndicator.classList.add('inactive');
+                statusIndicator.classList.remove('active');
+                statusText.textContent = '✗ API Key not configured';
+            }
+        }
+
+        // Save configuration
+        function saveConfiguration() {
+            const apiKey = document.getElementById('tmdbApiKey').value.trim();
+            const successMessage = document.getElementById('successMessage');
+            const errorMessage = document.getElementById('errorMessage');
+
+            // Hide previous messages
+            successMessage.style.display = 'none';
+            errorMessage.style.display = 'none';
+
+            // Validate API key (basic validation)
+            if (apiKey.length < 10) {
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            // Save to localStorage
+            if (window.setTMDBApiKey) {
+                window.setTMDBApiKey(apiKey);
+            } else {
+                localStorage.setItem('tmdb_api_key', apiKey);
+            }
+
+            // Show success message
+            successMessage.style.display = 'block';
+
+            // Update status
+            checkConfiguration();
+
+            // Hide success message after 5 seconds
+            setTimeout(() => {
+                successMessage.style.display = 'none';
+            }, 5000);
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', checkConfiguration);
+    </script>
+</body>
+</html>

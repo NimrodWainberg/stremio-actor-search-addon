@@ -2,14 +2,14 @@
   "id": "stremio-actor-search-addon",
   "version": "1.0.0",
   "name": "Actor Search Addon",
-  "description": "Search for actors and view all their movies and series",
+  "description": "Search for actors and view all their movies and series. Easy setup with TMDB API integration.",
   "logo": "https://i.imgur.com/your-logo.png",
   "resources": ["catalog"],
   "types": ["movie", "series"],
   "catalogs": [
     {
       "id": "actor_search",
-      "name": "Actor Movies",
+      "name": "🎬 Actor Movies",
       "type": "movie",
       "extra": [
         {
@@ -20,7 +20,7 @@
     },
     {
       "id": "actor_search",
-      "name": "Actor Series",
+      "name": "📺 Actor Series",
       "type": "series",
       "extra": [
         {
@@ -29,5 +29,9 @@
         }
       ]
     }
-  ]
+  ],
+  "behaviorHints": {
+    "configurable": true,
+    "configurationRequired": true
+  }
 }
