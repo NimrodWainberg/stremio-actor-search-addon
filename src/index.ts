@@ -39,7 +39,7 @@ const addon = new addonBuilder({
   catalogs: [
     {
       id: 'actor_search',
-      name: 'Actor Movies',
+      name: '🎬 Actor Movies',
       type: 'movie',
       extra: [
         {
@@ -50,7 +50,7 @@ const addon = new addonBuilder({
     },
     {
       id: 'actor_search',
-      name: 'Actor Series',
+      name: '📺 Actor Series',
       type: 'series',
       extra: [
         {
@@ -139,6 +139,9 @@ app.listen(PORT, () => {
   
   if (!process.env.TMDB_API_KEY) {
     console.log('⚠️  TMDB_API_KEY not set in environment variables');
-    console.log('💡 Users can configure their API key at: http://localhost:${PORT}/configure');
+    console.log('💡 Users can configure their API key at: http://localhost:${PORT}/configure`);
   }
 });
+
+// Export for Vercel
+export default app;

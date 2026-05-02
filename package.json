@@ -7,8 +7,7 @@
     "build": "tsc",
     "dev": "ts-node src/index.ts",
     "dev:watch": "nodemon --exec ts-node src/index.ts",
-    "start": "node dist/index.js",
-    "vercel-build": "tsc"
+    "start": "node dist/index.js"
   },
   "keywords": ["stremio", "addon", "actor", "search", "movies", "series", "tmdb"],
   "author": "",
